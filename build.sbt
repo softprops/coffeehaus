@@ -10,6 +10,10 @@ scalacOptions += Opts.compile.deprecation
 
 libraryDependencies += "org.mozilla" % "rhino" % "1.7R3"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+
+//libraryDependencies += "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
+
 licenses <<= (version)(v => Seq(
   ("MIT", url("https://github.com/softprops/cc/blob/%s/LICENSE" format v))
 ))
