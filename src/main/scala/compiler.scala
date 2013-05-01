@@ -26,7 +26,7 @@ abstract class Compiler(src: String) {
    * @return Either a compilation error description or
    *   the compiled Javascript code
    */
-  def compile(code: String, bare: Boolean): Either[String, String] =
+  def compile(code: String, bare: Boolean = false): Either[String, String] =
     withContext { ctx =>
       val coffee = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
       val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
