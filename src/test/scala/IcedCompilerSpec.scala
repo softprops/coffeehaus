@@ -14,5 +14,13 @@ class IcedCompilerSpec extends FunSpec {
                       |""".stripMargin)
       })
     }
+
+    it ("should compile bare coffee") {
+      Iced.compile("alert 'hello'", bare = true).fold(fail(_), { js =>
+        assert(js === """
+                      |alert('hello');
+                      |""".stripMargin)
+      })
+    }
   }
 }
