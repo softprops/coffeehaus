@@ -4,6 +4,8 @@ name := "cawfee"
 
 version := "0.1.0-SNAPSHOT"
 
+crossScalaVersions := Seq("2.9.3", "2.10.0", "2.10.1")
+
 description := "A coffeescript shop for JVM locals"
 
 scalacOptions += Opts.compile.deprecation
