@@ -1,4 +1,4 @@
-package cc
+package cawfee
 
 import org.scalatest.FunSpec
 import io.Source

@@ -1,6 +1,6 @@
 # cc
 
-A CoffeeScript compiler for the JVM.
+A coffeescript show for JVM locals
 
 ## /!\ Extraction in progress
 

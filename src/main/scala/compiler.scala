@@ -1,4 +1,4 @@
-package cc
+package cawfee
 
 import org.mozilla.javascript.{
   Context, Function, JavaScriptException, NativeObject }

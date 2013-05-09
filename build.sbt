@@ -1,10 +1,10 @@
 organization := "me.lessis"
 
-name := "cc"
+name := "cawfee"
 
 version := "0.1.0-SNAPSHOT"
 
-description := "A local brewery for CoffeeScripts"
+description := "A coffeescript shop for JVM locals"
 
 scalacOptions += Opts.compile.deprecation
 
@@ -12,10 +12,8 @@ libraryDependencies += "org.mozilla" % "rhino" % "1.7R3"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
 
-//libraryDependencies += "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
-
 licenses <<= (version)(v => Seq(
-  ("MIT", url("https://github.com/softprops/cc/blob/%s/LICENSE" format v))
+  ("MIT", url("https://github.com/softprops/cawfee/blob/%s/LICENSE" format v))
 ))
 
 publishTo := Some(Opts.resolver.sonatypeStaging)
@@ -26,8 +24,8 @@ publishMavenStyle := true
 
 pomExtra := (
   <scm>
-    <url>git@github.com:softprops/coffeescripted-sbt.git</url>
-    <connection>scm:git:git@github.com:softprops/coffeescripted-sbt.git</connection>
+    <url>git@github.com:softprops/cawfee.git</url>
+    <connection>scm:git:git@github.com:softprops/cawfee.git</connection>
   </scm>
   <developers>
     <developer>
