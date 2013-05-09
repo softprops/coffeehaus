@@ -14,7 +14,7 @@ in coffeescripted-sbt for use as a standalone library
 ## usage
 
 This library provides scala interfaces for compiling [vanilla][vanilla] and [iced][iced] CoffeeScript.
-It used the versions `1.6.2` and `1.6.2b` respectively. 
+It used the versions `1.6.2` and `1.6.2a` respectively. 
 
 To compile vanilla coffeescript
 
