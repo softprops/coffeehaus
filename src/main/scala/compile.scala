@@ -5,16 +5,24 @@ import org.mozilla.javascript.{
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 
+object Compile {
+  type Result = Either[String, String]
+  val iced = Iced
+  val vanilla = Vanilla
+}
+
 /**
  * A Scala / Rhino Coffeescript compiler.
  * @author daggerrz
  * @author doug (to a lesser degree)
  */
-abstract class Compiler(src: String) {
-  val utf8 = Charset.forName("utf-8")
+abstract class Compile(src: String)
+       extends ((String, Options) => Compile.Result) {
+
+  private val utf8 = Charset.forName("utf-8")
 
   /** compiler arguments in addition to `bare` */
-  def args: Map[String, Any] = Map.empty[String, Any]
+  protected def args: Map[String, Any] = Map.empty[String, Any]
 
   override def toString = "%s(%s)" format(getClass.getSimpleName, src)
 
@@ -22,15 +30,15 @@ abstract class Compiler(src: String) {
    * Compiles a string of Coffeescript code to Javascript.
    *
    * @param code the Coffeescript source code
-   * @param bare whether the Coffeescript compiler should run in "bare" mode
-   * @return Either a compilation error description or
+   * @param options coffeescript compiler options
+   * @return Compile.Result of either a compilation error description or
    *   the compiled Javascript code
    */
-  def compile(code: String, bare: Boolean = false): Either[String, String] =
+  def apply(code: String, options: Options): Compile.Result =
     withContext { ctx =>
       val coffee = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
       val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
-      val opts = ctx.evaluateString(scope, jsArgs(bare), null, 1, null)
+      val opts = ctx.evaluateString(scope, jsArgs(options.bare), null, 1, null)
       try {
         Right(compileFunc.call(
           ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
@@ -39,6 +47,9 @@ abstract class Compiler(src: String) {
           Left(e.getValue.toString)
       }
     }
+
+  /** Same as apply(code, options) but with default options */
+  def apply(code: String): Compile.Result = apply(code, Options())
 
   lazy val scope = withContext { ctx =>
     val scope = ctx.initStandardObjects()
@@ -75,8 +86,8 @@ abstract class Compiler(src: String) {
 
 }
 
-object Vanilla extends Compiler("vanilla/coffee-script.js")
+object Vanilla extends Compile("vanilla/coffee-script.js")
 
-object Iced extends Compiler("iced/coffee-script.js") {
+object Iced extends Compile("iced/coffee-script.js") {
   override def args = Map("runtime" -> "inline")
 }
