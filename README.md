@@ -33,5 +33,5 @@ as `scala.util.Failure(CompilerError(msg))`.
 
 Doug Tangren (softprops) 2013
 
-vanilla: http://coffeescript.org/
-iced: http://maxtaco.github.io/coffee-script/
+[vanilla]: http://coffeescript.org/
+[iced]: http://maxtaco.github.io/coffee-script/
