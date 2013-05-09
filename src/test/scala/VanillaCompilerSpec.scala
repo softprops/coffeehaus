@@ -1,9 +1,6 @@
 package cawfee
 
-import org.scalatest.FunSpec
-import io.Source
-
-class VanillaCompilerSpec extends FunSpec with Files {
+class VanillaCompilerSpec extends CawfeeSpec {
   describe("Vanilla Compiler") {
     it ("should compile vanilla coffee") {
       Vanilla.compile("alert 'hello'").fold(fail(_), { js =>
