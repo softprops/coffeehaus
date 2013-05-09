@@ -34,7 +34,7 @@ as `scala.util.Failure(CompilerError(msg))`.
 
 Don't have time to wait while your coffees being brewed? Try moving to the side of the counter.
 
-```
+```scala
 import scala.concurrent.Future
 import ExecutionContext.Implicits.global
 Future(Compile.vanilla("alert 'vanilla'")).map { coffee =>
