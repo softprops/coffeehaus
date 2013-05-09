@@ -1,19 +1,15 @@
 package cawfee
 
-import scala.util.{ Failure, Try }
+import scala.util.Success
 
 class IcedCompilerSpec extends CawfeeSpec {
-  describe("Vanilla Compiler") {
+  describe("Iced Compile") {
     it ("should compile iced coffee") {
-      assert(Compile.iced("alert 'hello'")
-             .recover({ case CompilerError(e) => Try(fail(e)) })
-             .get === file("/iced/basic.js"))
+      assert(Compile.iced("alert 'hello'") === Success(file("/iced/basic.js")))
     }
 
     it ("should compile bare coffee") {
-      assert(Compile.iced("alert 'hello'", Options(bare = true))
-             .recover({ case CompilerError(e) => Try(fail(e)) })
-             .get === file("/iced/bare.js"))
+      assert(Compile.iced("alert 'hello'", Options(bare = true)) === Success(file("/iced/bare.js")))
     }
   }
 }
