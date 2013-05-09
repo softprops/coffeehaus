@@ -19,7 +19,7 @@ It used the versions `1.6.2` and `1.6.2b` respectively.
 To compile vanilla coffeescript
 
 ```scala
-cawfee.Compile.vanilla("alert 'vanilla')
+cawfee.Compile.vanilla("alert 'vanilla'")
 ```
 
 To compile iced coffeescript
