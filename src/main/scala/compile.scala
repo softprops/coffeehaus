@@ -5,8 +5,12 @@ import org.mozilla.javascript.{
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 
+import scala.util.{ Failure, Try }
+
+case class CompilerError(msg: String) extends Throwable(msg)
+
 object Compile {
-  type Result = Either[String, String]
+  type Result = Try[String]
   val iced = Iced
   val vanilla = Vanilla
 }
@@ -40,11 +44,11 @@ abstract class Compile(src: String)
       val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
       val opts = ctx.evaluateString(scope, jsArgs(options.bare), null, 1, null)
       try {
-        Right(compileFunc.call(
+        Try(compileFunc.call(
           ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
       } catch {
         case e : JavaScriptException =>
-          Left(e.getValue.toString)
+          Failure(CompilerError(e.getValue.toString))
       }
     }
 
