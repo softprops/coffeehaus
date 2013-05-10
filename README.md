@@ -1,6 +1,6 @@
 # cawfee
 
-A coffeescript show for JVM locals
+A coffeescript shop for JVM locals.
 
 ## /!\ Extraction in progress
 
@@ -28,8 +28,8 @@ To compile iced coffeescript
 cawfee.Compile.iced("alert 'iced'")
 ```
 
-These will return a `scala.util.Try[String]` with the compiled source. Compiler errors will be encoded
-as `scala.util.Failure(CompilerError(msg))`.
+These will return a `scala.util.Try[String]` with the compiled source.
+Compiler errors will be encoded as `scala.util.Failure(CompilerError(msg))`.
 
 
 Don't have time to wait while your coffees being brewed? Try moving to the side of the counter.
