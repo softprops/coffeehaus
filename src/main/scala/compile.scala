@@ -7,7 +7,7 @@ import java.nio.charset.Charset
 
 import scala.util.{ Failure, Try }
 
-case class CompilerError(msg: String) extends Throwable(msg)
+case class CompileError(msg: String) extends Throwable(msg)
 
 object Compile {
   type Result = Try[String]
@@ -43,13 +43,12 @@ abstract class Compile(src: String)
       val coffee = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
       val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
       val opts = ctx.evaluateString(scope, jsArgs(options.bare), null, 1, null)
-      try {
         Try(compileFunc.call(
           ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
-      } catch {
-        case e : JavaScriptException =>
-          Failure(CompilerError(e.getValue.toString))
-      }
+          .recoverWith {
+            case e: JavaScriptException =>
+              Failure(CompileError(e.getValue.toString))
+          }
     }
 
   /** Same as apply(code, options) but with default options */
