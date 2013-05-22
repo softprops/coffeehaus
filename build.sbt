@@ -8,7 +8,10 @@ crossScalaVersions := Seq("2.9.3", "2.10.0", "2.10.1")
 
 description := "A coffeescript shop for JVM locals"
 
-scalacOptions += Opts.compile.deprecation
+scalacOptions <++= (scalaVersion).map { sv =>
+  if (sv.startsWith("2.10")) Seq(Opts.compile.deprecation, "-feature")
+  else Seq(Opts.compile.deprecation)
+}
 
 libraryDependencies += "org.mozilla" % "rhino" % "1.7R3"
 
