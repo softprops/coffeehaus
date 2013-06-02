@@ -1,4 +1,4 @@
-package cawfee
+package coffeehaus
 
 import org.mozilla.javascript.{
   Context, Function, JavaScriptException, NativeObject }

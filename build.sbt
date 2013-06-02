@@ -1,6 +1,6 @@
 organization := "me.lessis"
 
-name := "cawfee"
+name := "coffeehaus"
 
 version := "0.1.0-SNAPSHOT"
 
@@ -18,7 +18,7 @@ libraryDependencies += "org.mozilla" % "rhino" % "1.7R3"
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
 
 licenses <<= (version)(v => Seq(
-  ("MIT", url("https://github.com/softprops/cawfee/blob/%s/LICENSE" format v))
+  ("MIT", url("https://github.com/softprops/coffeehaus/blob/%s/LICENSE" format v))
 ))
 
 publishTo := Some(Opts.resolver.sonatypeStaging)
@@ -29,8 +29,8 @@ publishMavenStyle := true
 
 pomExtra := (
   <scm>
-    <url>git@github.com:softprops/cawfee.git</url>
-    <connection>scm:git:git@github.com:softprops/cawfee.git</connection>
+    <url>git@github.com:softprops/coffeehaus.git</url>
+    <connection>scm:git:git@github.com:softprops/coffeehaus.git</connection>
   </scm>
   <developers>
     <developer>
