@@ -4,9 +4,9 @@ This library was extracted from the [coffeescripted-sbt](https://github.com/soft
 
 Basic usage is simply
 
-    cawfee.Compile(coffeeSrc).fold(handleError, jsSrc)
+    coffeehaus.Compile(coffeeSrc).fold(handleError, jsSrc)
 
-See the [readme](https://github.com/softprops/cawfee/#readme) for more common usage examples.
+See the [readme](https://github.com/softprops/coffeehaus/#readme) for more common usage examples.
 
 ## Features
 

@@ -1,11 +1,11 @@
-# cawfee
+# coffeehaus
 
 A coffeescript shop for JVM locals.
 
 ## /!\ Extraction in progress
 
 This library is the extraction of the coffeescript compiler used
-in coffeescripted-sbt for use as a standalone library
+in [coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt) for use as a standalone library
 
 ## install
 
@@ -19,23 +19,30 @@ It used the versions `1.6.2` and `1.6.2a` respectively.
 To compile vanilla coffeescript
 
 ```scala
-cawfee.Compile.vanilla("alert 'vanilla'")
+coffeehaus.Compile.vanilla("alert 'vanilla'")
+```
+
+or simply
+
+```scala
+coffeehaus.Compile("alert 'vanilla'")
 ```
 
 To compile iced coffeescript
 
 ```scala
-cawfee.Compile.iced("alert 'iced'")
+coffeehaus.Compile.iced("alert 'iced'")
 ```
 
-These will return a `Either[cawfee.CompilerError, String]` with the compiled source.
+These will return a `Either[coffeehaus.CompilerError, String]` with the compiled source.
 
 Don't have time to wait while your coffee's being brewed? Try moving to the side of the counter.
 
 ```scala
+import coffeehaus.Compile
 import scala.concurrent.Future
 import ExecutionContext.Implicits.global
-Future(Compile.vanilla("alert 'vanilla'")).map { coffee =>
+Future(Compile("alert 'vanilla'")).map { coffee =>
   Thread.sleep(1000)
   coffee.fold(println, println)
 }

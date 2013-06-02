@@ -1,1 +1,1 @@
-[cawfee](https://github.com/softprops/cawfee) is coffeescript compiler for the jvm
+[coffeehaus](https://github.com/softprops/coffeehaus) is coffeescript shop for jvm locals
