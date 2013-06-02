@@ -4,21 +4,23 @@ import org.mozilla.javascript.{
   Context, Function, JavaScriptException, NativeObject }
 import java.io.InputStreamReader
 import java.nio.charset.Charset
+//import scala.util.{ Failure, Try }
 
-import scala.util.{ Failure, Try }
-
-case class CompileError(msg: String) extends Throwable(msg)
+case class CompileError(msg: String)// extends Throwable(msg)
 
 object Compile {
-  type Result = Try[String]
+  type Result = Either[CompileError, String]
   val iced = Iced
   val vanilla = Vanilla
+  /** use the default (vanilla) compiler */
+  def apply(code: String, options: Options = Options()) =
+    vanilla(code, options)
 }
 
 /**
  * A Scala / Rhino Coffeescript compiler.
  * @author daggerrz
- * @author doug (to a lesser degree)
+ * @author doug
  */
 abstract class Compile(src: String)
        extends ((String, Options) => Compile.Result) {
@@ -43,12 +45,19 @@ abstract class Compile(src: String)
       val coffee = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
       val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
       val opts = ctx.evaluateString(scope, jsArgs(options.bare), null, 1, null)
-        Try(compileFunc.call(
+      try {
+        Right(compileFunc.call(
+          ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
+      } catch {
+        case e: JavaScriptException =>
+          Left(CompileError(e.getValue.toString))
+      }
+        /*Try(compileFunc.call(
           ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
           .recoverWith {
             case e: JavaScriptException =>
               Failure(CompileError(e.getValue.toString))
-          }
+          }*/
     }
 
   /** Same as apply(code, options) but with default options */

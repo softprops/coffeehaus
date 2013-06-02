@@ -1,0 +1,24 @@
+## initial release
+
+This library was extracted from the [coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt) sbt plugin for standalone use and abuse.
+
+Basic usage is simply
+
+    cawfee.Compile(coffeeSrc).fold(handleError, jsSrc)
+
+See the [readme](https://github.com/softprops/cawfee/#readme) for more common usage examples.
+
+## Features
+
+- compiles [vanilla coffeescript](http://coffeescript.org/)
+- compiles [iced coffeescript](http://maxtaco.github.io/coffee-script/)
+
+### Non-Features
+
+- A lack of a out of the box async interface. This release targets scala versions supporting `scala.concurrent.Future`, which 
+makes it trivial to make the async choice yourself. Batteries are now included in the language so they are intentially kept out
+of the library.
+
+### Planned/Features
+
+- expose result of compilation as a `scala.util.Try[CompilationResult]` instead of either Either. This release also targets sbt 0.12.* which is compiled for scala 2.9.2.

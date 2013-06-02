@@ -28,22 +28,19 @@ To compile iced coffeescript
 cawfee.Compile.iced("alert 'iced'")
 ```
 
-These will return a `scala.util.Try[String]` with the compiled source.
-Compiler errors will be encoded as `scala.util.Failure(CompilerError(msg))`.
+These will return a `Either[cawfee.CompilerError, String]` with the compiled source.
 
-
-Don't have time to wait while your coffees being brewed? Try moving to the side of the counter.
+Don't have time to wait while your coffee's being brewed? Try moving to the side of the counter.
 
 ```scala
 import scala.concurrent.Future
 import ExecutionContext.Implicits.global
 Future(Compile.vanilla("alert 'vanilla'")).map { coffee =>
   Thread.sleep(1000)
-  println(coffee)
+  coffee.fold(println, println)
 }
 println("checkin' my tweets")
 ```
-
 
 Doug Tangren (softprops) 2013
 
