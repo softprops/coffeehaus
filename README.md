@@ -14,7 +14,7 @@ in [coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt) for use
 ## usage
 
 This library provides scala interfaces for compiling [vanilla][vanilla] and [iced][iced] CoffeeScript.
-It used the versions `1.6.2` and `1.6.2a` respectively. 
+It uses the versions `1.6.3` and `1.6.2d` respectively. 
 
 To compile vanilla coffeescript
 
@@ -48,6 +48,19 @@ Future(Compile("alert 'vanilla'")).map { coffee =>
 }
 println("checkin' my tweets")
 ```
+
+### Be Your Own Barista
+
+This library will always make a best attempt at providing interfaces to the latest coffeescript compilers.
+
+That doesn't mean you can't experiment with your own brews ( other versions of coffeescript ) by extending `coffeehaus.Compile` providing
+a resource path to the source of the script. As an example the built-in vanilla coffeescript compiler is defined as follows
+
+```scala
+Vanilla extends Compile("vanilla/coffee-script.js")
+```
+
+enjoy.
 
 Doug Tangren (softprops) 2013
 
