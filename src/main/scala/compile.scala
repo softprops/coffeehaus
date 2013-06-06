@@ -10,6 +10,7 @@ case class CompileError(msg: String)// extends Throwable(msg)
 
 object Compile {
   type Result = Either[CompileError, String]
+  val charset = Charset.forName("utf-8")
   val iced = Iced
   val vanilla = Vanilla
   /** use the default (vanilla) compiler */
@@ -24,8 +25,6 @@ object Compile {
  */
 abstract class Compile(src: String)
        extends ((String, Options) => Compile.Result) {
-
-  private val utf8 = Charset.forName("utf-8")
 
   /** compiler arguments in addition to `bare` */
   protected def args: Map[String, Any] = Map.empty[String, Any]
@@ -52,7 +51,8 @@ abstract class Compile(src: String)
         case e: JavaScriptException =>
           Left(CompileError(e.getValue.toString))
       }
-        /*Try(compileFunc.call(
+        /* in 2.10...
+         Try(compileFunc.call(
           ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
           .recoverWith {
             case e: JavaScriptException =>
@@ -63,14 +63,18 @@ abstract class Compile(src: String)
   /** Same as apply(code, options) but with default options */
   def apply(code: String): Compile.Result = apply(code, Options())
 
-  lazy val scope = withContext { ctx =>
+  /** Evaluate compiler source once in a shared scope */
+  private lazy val scope = withContext { ctx =>
     val scope = ctx.initStandardObjects()
     ctx.evaluateReader(
       scope,
       new InputStreamReader(
-        getClass().getResourceAsStream("/%s" format src), utf8
-      ), src, 1, null
-    )
+        getClass().getResourceAsStream("/%s" format src),
+        Compile.charset
+      ),
+      src,  //  source name
+      1,    //  line number
+      null) //  security domain
 
     scope
   }
