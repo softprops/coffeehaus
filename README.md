@@ -14,7 +14,7 @@ in [coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt) for use
 ## usage
 
 This library provides scala interfaces for compiling [vanilla][vanilla] and [iced][iced] CoffeeScript.
-It uses the versions `1.6.3` and `1.6.2d` respectively. 
+It uses the versions `1.6.3` and `1.6.3-b` respectively. 
 
 To compile vanilla coffeescript
 
@@ -40,8 +40,8 @@ Don't have time to wait while your coffee's being brewed? Try moving to the side
 
 ```scala
 import coffeehaus.Compile
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import ExecutionContext.Implicits.global
 Future(Compile("alert 'vanilla'")).map { coffee =>
   Thread.sleep(1000)
   coffee.fold(println, println)
