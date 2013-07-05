@@ -13,7 +13,7 @@ scalacOptions <++= (scalaVersion).map { sv =>
   else Seq(Opts.compile.deprecation)
 }
 
-libraryDependencies += "org.mozilla" % "rhino" % "1.7R3"
+libraryDependencies += "org.mozilla" % "rhino" % "1.7R4"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
 
