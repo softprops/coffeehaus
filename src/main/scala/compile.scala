@@ -4,12 +4,15 @@ import org.mozilla.javascript.{
   Context, Function, JavaScriptException, NativeObject }
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-//import scala.util.{ Failure, Try }
 
-case class CompileError(msg: String)// extends Throwable(msg)
+case class CompileError(msg: String)
+
+sealed trait Output
+case class JsSource(js: String) extends Output
+case class SourceMapping(js: String, sourceMap: String) extends Output
 
 object Compile {
-  type Result = Either[CompileError, String]
+  type Result = Either[CompileError, Output]
   val charset = Charset.forName("utf-8")
   val iced = Iced
   val vanilla = Vanilla
@@ -43,21 +46,29 @@ abstract class Compile(src: String)
     withContext { ctx =>
       val coffee = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
       val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
-      val opts = ctx.evaluateString(scope, jsArgs(options.bare), null, 1, null)
+      val opts = ctx.evaluateString(scope, jsArgs(options), null, 1, null)
       try {
-        Right(compileFunc.call(
-          ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
+        println("args %s" format(jsArgs(options)))
+        Right(compileFunc.call(ctx, scope, coffee,
+                       Array(code, opts)) match {
+                         case str: String => JsSource(str)
+                         case no: NativeObject =>
+                           val js = no.get("js", null).asInstanceOf[String]
+                           val srcMapJson = no.get("v3SourceMap", null).asInstanceOf[String]
+                           // to make configuring tooling easier, we may wish to simpily
+                           // append the //@ sourceMappingURL comment to the js source
+                           //val withMapping =
+                           //  """%s
+                           //    |//# sourceMappingURL=data:application/json;base64,%s
+                           //    |""".stripMargin.format(js, base64(js))
+                           SourceMapping(js, srcMapJson)
+                         case other =>
+                           throw new RuntimeException("%s was not a string or source mapping" format other)
+                       })
       } catch {
         case e: JavaScriptException =>
           Left(CompileError(e.getValue.toString))
       }
-        /* in 2.10...
-         Try(compileFunc.call(
-          ctx, scope, coffee, Array(code, opts)).asInstanceOf[String])
-          .recoverWith {
-            case e: JavaScriptException =>
-              Failure(CompileError(e.getValue.toString))
-          }*/
     }
 
   /** Same as apply(code, options) but with default options */
@@ -89,17 +100,23 @@ abstract class Compile(src: String)
       Context.exit()
     }
 
-  private def jsArgs(bare: Boolean) =
-    ((List.empty[String] /: (Map("bare" -> bare) ++ args)) {
-      (a,e) => e match {
-        case (k, v) =>
-          "%s:%s".format(k, v match {
-            case s: String => "'%s'" format s
-            case lit => lit
-          }) :: a
-        }
-    }).mkString("({",",","});")
-
+  private def jsArgs(opts: Options) =
+    ((List.empty[String] /:
+      (Map("bare" -> opts.bare, "sourceMap" -> opts.sourceMap) ++
+       opts.filename.map("filename" -> _) ++
+       opts.inline.map("inline" -> _) ++
+       opts.generatedFile.map("generatedFile" -> _) ++
+       opts.sourceRoot.map("sourceRoot" -> _) ++
+       opts.sourceFiles.map("sourceFiles" -> _) ++ args)) {
+         (a,e) => e match {
+           case (k, v) =>
+             "%s:%s".format(k, v match {
+               case s: String => "'%s'" format s
+               case s: Seq[_] => s.mkString("['", "','" ,"']")
+               case lit => lit
+             }) :: a
+         }
+       }).mkString("({",",","});")
 }
 
 object Vanilla extends Compile("vanilla/coffee-script.js")
