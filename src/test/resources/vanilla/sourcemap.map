@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    ""
+  ],
+  "names": [],
+  "mappings": "AAAA;CAAA,CAAA,EAAA,CAAA;CAAA",
+  "sourcesContent": [
+    "alert 'hi'"
+  ]
+}
