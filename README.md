@@ -19,7 +19,7 @@ It uses the versions `1.6.3` and `1.6.3-b` respectively.
 To compile vanilla coffeescript
 
 ```scala
-coffeehaus.Compile.vanilla("alert 'vanilla'")
+coffeehaus.Compile.vanilla()("alert 'vanilla'")
 ```
 
 or simply
@@ -31,7 +31,7 @@ coffeehaus.Compile("alert 'vanilla'")
 To compile iced coffeescript
 
 ```scala
-coffeehaus.Compile.iced("alert 'iced'")
+coffeehaus.Compile.iced()("alert 'iced'")
 ```
 
 These will return a `Either[coffeehaus.CompilerError, String]` with the compiled source.
