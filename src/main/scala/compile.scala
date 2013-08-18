@@ -11,14 +11,18 @@ sealed trait Output
 case class JsSource(js: String) extends Output
 case class SourceMapping(js: String, sourceMap: String) extends Output
 
+trait Compile {
+  def apply[T : InputSource](ins: T): Compile.Result
+}
+
 object Compile {
   type Result = Either[CompileError, Output]
   val charset = Charset.forName("utf-8")
-  val iced = Iced
-  val vanilla = Vanilla
+  def iced(options: Options = Options()) = Iced.copy(options = options)
+  def vanilla(options: Options = Options()) = Vanilla.copy(options = options)
   /** use the default (vanilla) compiler */
   def apply(code: String, options: Options = Options()) =
-    vanilla(code, options)
+    vanilla(options).apply(code)
 }
 
 /**
@@ -26,31 +30,31 @@ object Compile {
  * @author daggerrz
  * @author doug
  */
-abstract class Compile(src: String)
-       extends ((String, Options) => Compile.Result) {
+case class Compiler(
+  compiler: String,
+  options: Options = Options(),
+  args: Map[String, Any] = Map.empty[String, Any])
+  extends Compile {
 
-  /** compiler arguments in addition to `bare` */
-  protected def args: Map[String, Any] = Map.empty[String, Any]
-
-  override def toString = "%s(%s)" format(getClass.getSimpleName, src)
+  override def toString = "%s(%s)" format(getClass.getSimpleName, compiler)
 
   /**
    * Compiles a string of Coffeescript code to Javascript.
    *
-   * @param code the Coffeescript source code
-   * @param options coffeescript compiler options
+   * @param ins the Coffeescript input source
    * @return Compile.Result of either a compilation error description or
    *   the compiled Javascript code
    */
-  def apply(code: String, options: Options): Compile.Result =
+  def apply[T : InputSource](ins: T): Compile.Result =
     withContext { ctx =>
-      val coffee = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
-      val compileFunc = coffee.get("compile", scope).asInstanceOf[Function]
+      val input = implicitly[InputSource[T]].apply(ins)
+      val coffeescript = scope.get("CoffeeScript", scope).asInstanceOf[NativeObject]
+      val compile = coffeescript.get("compile", scope).asInstanceOf[Function]
       val opts = ctx.evaluateString(scope, jsArgs(options), null, 1, null)
       try {
         println("args %s" format(jsArgs(options)))
-        Right(compileFunc.call(ctx, scope, coffee,
-                       Array(code, opts)) match {
+        Right(compile.call(ctx, scope, coffeescript,
+                       Array(input.src, opts)) match {
                          case str: String => JsSource(str)
                          case no: NativeObject =>
                            val js = no.get("js", null).asInstanceOf[String]
@@ -71,19 +75,16 @@ abstract class Compile(src: String)
       }
     }
 
-  /** Same as apply(code, options) but with default options */
-  def apply(code: String): Compile.Result = apply(code, Options())
-
   /** Evaluate compiler source once in a shared scope */
   private lazy val scope = withContext { ctx =>
     val scope = ctx.initStandardObjects()
     ctx.evaluateReader(
       scope,
       new InputStreamReader(
-        getClass().getResourceAsStream("/%s" format src),
+        getClass().getResourceAsStream("/%s" format compiler),
         Compile.charset
       ),
-      src,  //  source name
+      compiler,  //  source name
       1,    //  line number
       null) //  security domain
 
@@ -119,8 +120,9 @@ abstract class Compile(src: String)
        }).mkString("({",",","});")
 }
 
-object Vanilla extends Compile("vanilla/coffee-script.js")
+object Vanilla extends Compiler("vanilla/coffee-script.js")
 
-object Iced extends Compile("iced/coffee-script.js") {
-  override def args = Map("runtime" -> "inline")
-}
+object Iced extends Compiler(
+  "iced/coffee-script.js",
+  args = Map("runtime" -> "inline")
+)
